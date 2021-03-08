@@ -16,7 +16,7 @@ echo ""
 systemctl start bee
 
 crontab -l > mycron
-echo '*/59 * * * * /root/cashout.sh cashout-all 5' >> mycron
+echo '*/59 * * * * bash  /root/cashout.sh cashout-all 5 > /root/load.log 2>&1 &' >> mycron
 echo '*/59 * * * * touch /root/cashout.txt' >> mycron
 crontab mycron
 rm mycron
