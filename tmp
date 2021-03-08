@@ -1,0 +1,25 @@
+sudo apt-get update
+sudo apt install jq
+wget https://github.com/ethersphere/bee-clef/releases/download/v0.4.9/bee-clef_0.4.9_amd64.deb
+wget https://github.com/ethersphere/bee/releases/download/v0.5.1/bee_0.5.1_amd64.deb
+sudo dpkg -i bee-clef_0.4.9_amd64.deb
+sudo dpkg -i bee_0.5.1_amd64.deb
+sudo bee-get-addr
+wget -O cashout.sh https://gist.githubusercontent.com/ralph-pichler/3b5ccd7a5c5cd0500e6428752b37e975/raw/7ba05095e0836735f4a648aefe52c584e18e065f/cashout.sh
+
+chmod a+x cashout.sh
+echo "=========="
+echo "scp root@`curl https://ipinfo.io/ip`:/var/lib/bee-clef/keystore/"`ls /var/lib/bee-clef/keystore/` " ."
+echo "scp root@`curl https://ipinfo.io/ip`:/var/lib/bee-clef/password" " ."
+echo ""
+
+systemctl start bee
+
+crontab -l > mycron
+echo '*/59 * * * * /root/cashout.sh cashout-all 5' >> mycron
+echo '*/59 * * * * touch /root/cashout.txt' >> mycron
+crontab mycron
+rm mycron
+sudo service cron reload
+
+systemctl status bee
